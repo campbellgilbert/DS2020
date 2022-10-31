@@ -1,0 +1,210 @@
+//October 9th
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+/*
+ 1. Take a look at the IntArrayListIterator class inside IterIntArrayList. It has two member variables, `arrList` and `currentIndex`. 
+ Why are these helpful to implementing an ArrayList Iterator?
+ 
+ 2. The `IntArrayListIterator` constructor is currently empty. Start by filling it in.
+ 
+ 3. Implement the `hasNext()` method. Consider whether any of the IterIntArrayList methods may be helpful here.
+ 
+ 4. Implement the `next()` method. Note that this method throws a NoSuchElementException. 
+ You can throw an exception by adding the following line of code in the appropriate place
+    ```java
+    throw new NoSuchElementException("No more elements");
+    ``
+    
+ */
+
+public class IterIntArrayList implements Iterable<Integer>{
+
+	private int size = 0;
+	private int[] array = null;
+	
+	
+	public class IntArrayListIterator implements Iterator<Integer>{
+		IterIntArrayList arrList;
+		int currentIndex;
+		
+		public IntArrayListIterator(IterIntArrayList arrList) {
+			this.arrList = arrList;
+			this.currentIndex = 0;
+		}
+		
+		@Override
+		public boolean hasNext() {
+			try {
+				this.arrList.get(this.currentIndex);
+				return true;
+			} catch (Exception e) {
+				System.out.println(":(");
+				return false;
+			}
+		}
+
+		@Override
+		public Integer next() throws NoSuchElementException {
+			if (this.currentIndex == this.arrList.size()) {
+			    throw new NoSuchElementException("No more elements");
+			}
+			if (this.hasNext()) {
+				this.currentIndex++;
+				return this.arrList.get(this.currentIndex - 1);
+			} 
+			return null;
+		}
+		
+		
+	}
+	
+	@Override
+	public Iterator<Integer> iterator() {
+		return new IntArrayListIterator(this);
+	}
+
+	/**
+	 * Construct an IntArrayList with a given initial length.
+	 *
+	 * @param initialLength The initial length of the array.
+	 */
+	public IterIntArrayList(int initialLength) {
+		this.array = new int[initialLength];
+		this.size = 0;
+	}
+
+	/**
+	 * Return the number of elements in the IterIntArrayList.
+	 *
+	 * @return The number of elements in the IterIntArrayList.
+	 */
+	public int size() {
+		return this.size;
+	}
+
+
+	/**
+	 * Add an element to the end of the IterIntArrayList.
+	 *
+	 * @param element The element to add.
+	 */
+	public void add(int element) {
+		if (this.size == this.array.length) {
+			this.resize();
+		}
+		this.array[this.size] = element;
+		this.size++;
+	}
+
+	/**
+	 * Get the element at the specified index.
+	 *
+	 * This function assumes that the index argument is within range of the IterIntArrayList.
+	 *
+	 * @param index The index to get.
+	 * @return The element at the specified index.
+	 */
+	public int get(int index) {
+		return this.array[index];
+	}
+
+	/**
+	 * Remove the element at the specified index.
+	 *
+	 * This function assumes that the index argument is within range of the IterIntArrayList.
+	 *
+	 * @param index The index to remove.
+	 */
+	public void remove(int index) {
+		for (int i = index; i < this.size - 1; i++) {
+			this.array[i] = this.array[i+1];
+		}
+		this.size--;
+	}
+	
+	/**
+	 * Double the size of the internal array.
+	 */
+	private void resize() {
+		int[] newArray = new int[2 * this.array.length];
+		for (int i = 0; i < this.size; i++) {
+			newArray[i] = this.array[i];
+		}
+		this.array = newArray;
+	}
+	
+
+	public static void main(String[] args) {
+		IterIntArrayList arrList = new IterIntArrayList(3);
+		arrList.add(1);
+		arrList.add(2);
+		arrList.add(3);
+		
+		Iterator<Integer> iter = arrList.iterator();
+		
+		if (iter.next() != 1) {
+			throw new RuntimeException("next() Test Failed");
+		}
+		
+		if (iter.next() != 2) {
+			throw new RuntimeException("next() Test Failed");
+		}
+		
+		if (iter.next() != 3) {
+			throw new RuntimeException("next() Test Failed");
+		}
+		
+		try {
+			iter.next();
+			throw new RuntimeException("next() Test Failed");
+		}
+		catch (Exception e) {
+			if (e instanceof NoSuchElementException) {
+				//
+		}
+			else {
+				throw e;
+			}
+		}
+		
+		/*
+		IterIntArrayList arrList = new IterIntArrayList(3);
+		arrList.add(1);
+		arrList.add(2);
+		arrList.add(3);
+		Iterator<Integer> iter = arrList.iterator();
+		boolean hasNext = iter.hasNext();
+		if (!hasNext){
+			throw new AssertionError("hasNext() should be true after elements are added");
+		}
+		Integer first = iter.next();
+		if (first!=arrList.get(0)) {
+			throw new AssertionError("first next() should return " + arrList.get(0));
+		}
+		Integer second = iter.next();
+		if (second!=arrList.get(1)) {
+			throw new AssertionError("second next() should return " + arrList.get(1));
+		}
+		boolean hasNext2 = iter.hasNext();
+		if (!hasNext2) {
+			throw new AssertionError("hasNext() should be true before finishing iteration");
+		}
+		Integer third = iter.next();
+		if (third!=arrList.get(2)) {
+			throw new AssertionError("third next() should return " + arrList.get(2));
+		}
+		boolean hasNext3 = iter.hasNext();
+		if (hasNext3) {
+			throw new AssertionError("hasNext() should be false after finishing iteration");
+		}*/
+		
+	}
+
+	
+	
+	
+	
+
+}
